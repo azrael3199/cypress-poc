@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+// Disable TLS temporarily
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-module.exports = nextConfig
+const nextConfig = {};
+
+module.exports = nextConfig;
