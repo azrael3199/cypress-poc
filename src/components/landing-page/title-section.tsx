@@ -22,7 +22,7 @@ const TitleSection: React.FC<TitleSectionProps> = ({
             <h2 className="text-left text-3xl sm:text-5xl sm:max-w-[750px] md:text-center font-semibold">
               {title}
             </h2>
-            <p className="dark:text-washed-purple-700 sm:max-w-[450px]">
+            <p className="dark:text-washed-purple-700 sm:max-w-[450px] md:text-center">
               {subheading}
             </p>
           </>
