@@ -39,3 +39,7 @@ next-env.d.ts
 # Migrations
 migrations/*.sql
 migrations/meta
+
+# Auth
+.npmrc
+certs
