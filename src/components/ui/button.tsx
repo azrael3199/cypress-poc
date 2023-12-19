@@ -12,7 +12,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          " whitespace-nowrap bg-primary text-lg text-primary-foreground shadow-2xl shadow-indigo-600/50 rounded-lg ",
+          " whitespace-nowrap bg-primary text-lg text-primary-foreground shadow-2xl shadow-indigo-600/50 border-2 rounded-lg",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
@@ -46,6 +46,8 @@ export interface ButtonProps
   asChild?: boolean;
   icon?: any;
   logoStyles?: string;
+  variant?: string;
+  size?: string;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
