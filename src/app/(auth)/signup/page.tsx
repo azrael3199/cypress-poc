@@ -23,6 +23,7 @@ import Logo from "../../../../public/cypresslogo.svg";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { MailCheck } from "lucide-react";
 import { FormSchema } from "@/lib/types";
+import { actionSignUpUser } from "@/lib/server-action/auth-actions";
 
 const SignUpFormSchema = z
   .object({
@@ -74,10 +75,15 @@ const Signup = () => {
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = async ({
-    email,
-    password,
-  }: z.infer<typeof FormSchema>) => {};
+  const onSubmit = async ({ email, password }: z.infer<typeof FormSchema>) => {
+    const { error } = await actionSignUpUser({ email, password });
+    if (error) {
+      setSubmitError(error.message);
+      form.reset();
+      return;
+    }
+    setConfirmation(true);
+  };
 
   const signUpHandler = () => {};
 
@@ -105,7 +111,7 @@ const Signup = () => {
               disabled={isLoading}
               control={form.control}
               name="email"
-              render={(field) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input type="email" placeholder="Email" {...field} />
@@ -118,7 +124,7 @@ const Signup = () => {
               disabled={isLoading}
               control={form.control}
               name="password"
-              render={(field) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input type="password" placeholder="Password" {...field} />
@@ -131,7 +137,7 @@ const Signup = () => {
               disabled={isLoading}
               control={form.control}
               name="confirmPassword"
-              render={(field) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
