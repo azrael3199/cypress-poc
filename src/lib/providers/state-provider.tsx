@@ -31,6 +31,22 @@ type Action =
   | {
       type: "SET_WORKSPACES";
       payload: { workspaces: appWorkspacesType[] | [] };
+    }
+  | {
+      type: "SET_FOLDERS";
+      payload: { workspaceId: string; folders: [] | appFoldersType[] };
+    }
+  | {
+      type: "ADD_FOLDER";
+      payload: { workspaceId: string; folder: appFoldersType };
+    }
+  | {
+      type: "UPDATE_FOLDER";
+      payload: {
+        workspaceId: string;
+        folder: Partial<appFoldersType>;
+        folderId: string;
+      };
     };
 
 const initialState: AppState = { workspaces: [] };
@@ -71,6 +87,71 @@ const appReducer = (
       return {
         ...state,
         workspaces: action.payload.workspaces,
+      };
+
+    case "SET_FOLDERS":
+      return {
+        ...state,
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
+            return {
+              ...workspace,
+              folders: action.payload.folders.sort(
+                (a, b) =>
+                  new Date(a.createdAt).getTime() -
+                  new Date(b.createdAt).getTime()
+              ),
+            };
+          }
+
+          return workspace;
+        }),
+      };
+
+    case "ADD_FOLDER":
+      return {
+        ...state,
+        workspaces: state.workspaces
+          .map((workspace) => {
+            if (workspace.id === action.payload.workspaceId) {
+              return {
+                ...workspace,
+                folders: [...workspace.folders, action.payload.folder],
+              };
+            }
+
+            return workspace;
+          })
+          .sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          ),
+      };
+
+    case "UPDATE_FOLDER":
+      return {
+        ...state,
+        workspaces: state.workspaces
+          .map((workspace) => {
+            if (workspace.id === action.payload.workspaceId) {
+              return {
+                ...workspace,
+                folders: workspace.folders.map((folder) => {
+                  if (folder.id === action.payload.folderId) {
+                    return { ...folder, ...action.payload.folder };
+                  }
+
+                  return folder;
+                }),
+              };
+            }
+
+            return workspace;
+          })
+          .sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          ),
       };
 
     default:

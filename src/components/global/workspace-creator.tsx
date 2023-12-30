@@ -20,146 +20,16 @@ import { addCollaborators, createWorkspace } from "@/lib/supabase/queries";
 import CollaboratorSearch from "./collaborator-search";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useToast } from "../ui/use-toast";
 
 const WorkspaceCreator = () => {
   const { user } = useSupabaseUser();
+  const { toast } = useToast();
   const router = useRouter();
   const [permissions, setPermissions] = useState("private");
   const [title, setTitle] = useState("");
-  const [collaborators, setCollaborators] = useState<User[]>([
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "123 Main St", city: "City1", zip: "12345" },
-    //   email: "user1@example.com",
-    //   fullName: "John Doe",
-    //   id: "user1",
-    //   paymentMethod: { card_type: "Visa", last_four_digits: "1234" },
-    //   updatedAt: "2023-01-01T12:00:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "456 Oak St", city: "City2", zip: "67890" },
-    //   email: "user2@example.com",
-    //   fullName: "Jane Smith",
-    //   id: "user2",
-    //   paymentMethod: { card_type: "MasterCard", last_four_digits: "5678" },
-    //   updatedAt: "2023-01-02T15:30:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "789 Pine St", city: "City3", zip: "54321" },
-    //   email: "user3@example.com",
-    //   fullName: "Alice Johnson",
-    //   id: "user3",
-    //   paymentMethod: {
-    //     card_type: "American Express",
-    //     last_four_digits: "9876",
-    //   },
-    //   updatedAt: "2023-01-03T08:45:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "101 Elm St", city: "City4", zip: "98765" },
-    //   email: "user4@example.com",
-    //   fullName: "Bob Williams",
-    //   id: "user4",
-    //   paymentMethod: { card_type: "Discover", last_four_digits: "4321" },
-    //   updatedAt: "2023-01-04T17:20:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "222 Oak St", city: "City5", zip: "54321" },
-    //   email: "user5@example.com",
-    //   fullName: "Eva Martinez",
-    //   id: "user5",
-    //   paymentMethod: { card_type: "Visa", last_four_digits: "7890" },
-    //   updatedAt: "2023-01-05T14:10:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "333 Pine St", city: "City6", zip: "98765" },
-    //   email: "user6@example.com",
-    //   fullName: "Charlie Brown",
-    //   id: "user6",
-    //   paymentMethod: { card_type: "MasterCard", last_four_digits: "1230" },
-    //   updatedAt: "2023-01-06T11:30:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "444 Elm St", city: "City7", zip: "13579" },
-    //   email: "user7@example.com",
-    //   fullName: "Grace Miller",
-    //   id: "user7",
-    //   paymentMethod: { card_type: "Amex", last_four_digits: "4567" },
-    //   updatedAt: "2023-01-07T09:15:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "555 Maple St", city: "City8", zip: "24680" },
-    //   email: "user8@example.com",
-    //   fullName: "David Wilson",
-    //   id: "user8",
-    //   paymentMethod: { card_type: "Discover", last_four_digits: "7890" },
-    //   updatedAt: "2023-01-08T13:45:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "666 Birch St", city: "City9", zip: "97531" },
-    //   email: "user9@example.com",
-    //   fullName: "Olivia Davis",
-    //   id: "user9",
-    //   paymentMethod: { card_type: "Visa", last_four_digits: "0123" },
-    //   updatedAt: "2023-01-09T18:00:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "777 Cedar St", city: "City10", zip: "86420" },
-    //   email: "user10@example.com",
-    //   fullName: "Samuel Brown",
-    //   id: "user10",
-    //   paymentMethod: { card_type: "MasterCard", last_four_digits: "3456" },
-    //   updatedAt: "2023-01-10T22:30:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "888 Pine St", city: "City11", zip: "75309" },
-    //   email: "user11@example.com",
-    //   fullName: "Ava Taylor",
-    //   id: "user11",
-    //   paymentMethod: {
-    //     card_type: "American Express",
-    //     last_four_digits: "6789",
-    //   },
-    //   updatedAt: "2023-01-11T10:05:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "999 Elm St", city: "City12", zip: "24680" },
-    //   email: "user12@example.com",
-    //   fullName: "Jack Johnson",
-    //   id: "user12",
-    //   paymentMethod: { card_type: "Visa", last_four_digits: "9012" },
-    //   updatedAt: "2023-01-12T15:20:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "111 Oak St", city: "City13", zip: "13579" },
-    //   email: "user13@example.com",
-    //   fullName: "Sophia Adams",
-    //   id: "user13",
-    //   paymentMethod: { card_type: "MasterCard", last_four_digits: "2345" },
-    //   updatedAt: "2023-01-13T18:45:00Z",
-    // },
-    // {
-    //   avatarUrl: "/avatars/7.png",
-    //   billingAddress: { street: "222 Pine St", city: "City14", zip: "97531" },
-    //   email: "user14@example.com",
-    //   fullName: "Nathan Wilson",
-    //   id: "user14",
-    //   paymentMethod: { card_type: "Discover", last_four_digits: "6789" },
-    //   updatedAt: "2023-01-14T12:10:00Z",
-    // },
-  ]);
+  const [collaborators, setCollaborators] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const addCollaborator = (user: User) => {
     setCollaborators([...collaborators, user]);
@@ -170,6 +40,7 @@ const WorkspaceCreator = () => {
   };
 
   const createItem = async () => {
+    setIsLoading(true);
     const uuid = v4();
     if (user?.id) {
       const newWorkspace: Workspace = {
@@ -186,14 +57,17 @@ const WorkspaceCreator = () => {
 
       if (permissions === "private") {
         await createWorkspace(newWorkspace);
+        toast({ title: "Success", description: "Created the workspace" });
         router.refresh();
       }
 
       if (permissions === "shared") {
         await createWorkspace(newWorkspace);
         await addCollaborators(collaborators, uuid);
+        toast({ title: "Success", description: "Created the workspace" });
         router.refresh();
       }
+      setIsLoading(false);
     }
   };
 
@@ -308,7 +182,9 @@ const WorkspaceCreator = () => {
       <Button
         type="button"
         disabled={
-          !title || (permissions === "shared" && collaborators.length === 0)
+          !title ||
+          (permissions === "shared" && collaborators.length === 0) ||
+          isLoading
         }
         variant="secondary"
         onClick={createItem}
