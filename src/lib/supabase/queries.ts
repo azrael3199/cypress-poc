@@ -3,12 +3,13 @@
 import { validate } from "uuid";
 import {
   collaborators,
+  files,
   folders,
   users,
   workspaces,
 } from "../../../migrations/schema";
 import db from "./db";
-import { Folder, Subscription, User, Workspace } from "./supabase.types";
+import { File, Folder, Subscription, User, Workspace } from "./supabase.types";
 import { and, eq, ilike, notExists } from "drizzle-orm";
 
 export const createWorkspace = async (workspace: Workspace) => {
@@ -51,6 +52,33 @@ export const getFolders = async (workspaceId: string) => {
     return { data: results, error: null };
   } catch (error) {
     return { data: null, error: `Error: ${error}` };
+  }
+};
+
+export const getFiles = async (folderId: string) => {
+  const isValid = validate(folderId);
+  if (!isValid) {
+    return {
+      data: null,
+      error: "Error",
+    };
+  }
+
+  try {
+    const results: File[] | [] = await db
+      .select()
+      .from(files)
+      .orderBy(files.createdAt)
+      .where(eq(files.folderId, folderId));
+    return {
+      data: results,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      data: null,
+      error: `Error ${error}`,
+    };
   }
 };
 
@@ -146,6 +174,16 @@ export const createFolder = async (folder: Folder) => {
   }
 };
 
+export const createFile = async (file: File) => {
+  try {
+    const response = await db.insert(files).values(file);
+    return { data: null, error: null };
+  } catch (error) {
+    console.log(error);
+    return { data: null, error: `Error: ${error}` };
+  }
+};
+
 export const updateFolder = async (
   folder: Partial<Folder>,
   folderId: string
@@ -156,6 +194,19 @@ export const updateFolder = async (
   } catch (error) {
     console.log("Error", error);
     return { data: null, error: `Error ${error}` };
+  }
+};
+
+export const updateFile = async (file: Partial<File>, fileId: string) => {
+  try {
+    const response = await db
+      .update(files)
+      .set(file)
+      .where(eq(files.id, fileId));
+    return { data: null, error: null };
+  } catch (error) {
+    console.log(error);
+    return { data: null, error: `Error: ${error}` };
   }
 };
 
