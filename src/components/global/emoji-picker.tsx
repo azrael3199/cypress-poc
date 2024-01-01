@@ -8,20 +8,26 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { twMerge } from "tailwind-merge";
 
 interface EmojiPickerProps {
   children: React.ReactNode;
   getValue?: (emoji: string) => void;
+  className?: string;
 }
 
-const EmojiPicker: React.FC<EmojiPickerProps> = ({ children, getValue }) => {
+const EmojiPicker: React.FC<EmojiPickerProps> = ({
+  children,
+  getValue,
+  className,
+}) => {
   const route = useRouter();
   const Picker = dynamic(() => import("emoji-picker-react"));
   const onClick = (selectedEmoji: any) => {
     if (getValue) getValue(selectedEmoji.emoji);
   };
   return (
-    <div className="flex items-center">
+    <div className={twMerge("flex items-center", className)}>
       <Popover>
         <PopoverTrigger className="cursor-pointer">{children}</PopoverTrigger>
         <PopoverContent
