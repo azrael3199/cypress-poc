@@ -48,7 +48,7 @@ const WorkspaceCreator = () => {
         createdAt: new Date().toISOString(),
         iconId: "💼",
         id: uuid,
-        inTrash: "",
+        inTrash: null,
         title,
         workspaceOwner: user.id,
         logo: null,
