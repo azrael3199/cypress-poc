@@ -21,8 +21,10 @@ import CollaboratorSearch from "./collaborator-search";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useToast } from "../ui/use-toast";
+import { useAppState } from "@/lib/providers/state-provider";
 
 const WorkspaceCreator = () => {
+  const { dispatch } = useAppState();
   const { user } = useSupabaseUser();
   const { toast } = useToast();
   const router = useRouter();
@@ -57,6 +59,10 @@ const WorkspaceCreator = () => {
 
       if (permissions === "private") {
         await createWorkspace(newWorkspace);
+        dispatch({
+          type: "ADD_WORKSPACE",
+          payload: { ...newWorkspace, folders: [] },
+        });
         toast({ title: "Success", description: "Created the workspace" });
         router.refresh();
       }
@@ -64,6 +70,10 @@ const WorkspaceCreator = () => {
       if (permissions === "shared") {
         await createWorkspace(newWorkspace);
         await addCollaborators(collaborators, uuid);
+        dispatch({
+          type: "ADD_WORKSPACE",
+          payload: { ...newWorkspace, folders: [] },
+        });
         toast({ title: "Success", description: "Created the workspace" });
         router.refresh();
       }

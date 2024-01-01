@@ -20,9 +20,11 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
   sharedWorkspaces,
   defaultValue,
 }) => {
-  const { dispatch, state } = useAppState();
+  const { dispatch, state, workspaceId } = useAppState();
   const [selectedOption, setSelectedOption] = useState(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
+
+  console.log("privateWorkspaces", privateWorkspaces);
 
   useEffect(() => {
     if (!state.workspaces.length) {
@@ -37,13 +39,15 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
         },
       });
     }
-  }, [
-    privateWorkspaces,
-    collaboratingWorkspaces,
-    sharedWorkspaces,
-    state.workspaces.length,
-    dispatch,
-  ]);
+    setSelectedOption(
+      [
+        ...privateWorkspaces,
+        ...collaboratingWorkspaces,
+        ...sharedWorkspaces,
+      ].find((workspace) => workspace.id === workspaceId)
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [privateWorkspaces, collaboratingWorkspaces, sharedWorkspaces]);
 
   const handleSelect = (option: Workspace) => {
     setSelectedOption(option);

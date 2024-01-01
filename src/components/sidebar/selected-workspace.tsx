@@ -25,7 +25,8 @@ const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
         .getPublicUrl(workspace.logo).data.publicUrl;
       setWorkspaceLogo(path);
     }
-  }, [workspace, supabase.storage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspace]);
 
   return (
     <Link

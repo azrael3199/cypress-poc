@@ -11,6 +11,7 @@ import {
 import db from "./db";
 import { File, Folder, Subscription, User, Workspace } from "./supabase.types";
 import { and, eq, ilike, notExists } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const createWorkspace = async (workspace: Workspace) => {
   try {
@@ -20,6 +21,11 @@ export const createWorkspace = async (workspace: Workspace) => {
     console.log(error);
     return { data: null, error: "Error" };
   }
+};
+
+export const deleteWorkspace = async (workspaceId: string) => {
+  if (!workspaceId) return;
+  await db.delete(workspaces).where(eq(workspaces.id, workspaceId));
 };
 
 export const getUserSubscriptionStatus = async (userId: string) => {
@@ -164,6 +170,27 @@ export const addCollaborators = async (users: User[], workspaceId: string) => {
   });
 };
 
+export const removeCollaborators = async (
+  users: User[],
+  workspaceId: string
+) => {
+  const response = users.forEach(async (user: User) => {
+    const userExists = await db.query.collaborators.findFirst({
+      where: (u, { eq }) =>
+        and(eq(u.userId, user.id), eq(u.workspaceId, workspaceId)),
+    });
+    if (!userExists)
+      await db
+        .delete(collaborators)
+        .where(
+          and(
+            eq(collaborators.workspaceId, workspaceId),
+            eq(collaborators.userId, user.id)
+          )
+        );
+  });
+};
+
 export const createFolder = async (folder: Folder) => {
   try {
     const response = await db.insert(folders).values(folder);
@@ -177,6 +204,24 @@ export const createFolder = async (folder: Folder) => {
 export const createFile = async (file: File) => {
   try {
     const response = await db.insert(files).values(file);
+    return { data: null, error: null };
+  } catch (error) {
+    console.log(error);
+    return { data: null, error: `Error: ${error}` };
+  }
+};
+
+export const updateWorkspace = async (
+  workspace: Partial<Workspace>,
+  workspaceId: string
+) => {
+  if (!workspaceId) return;
+  try {
+    await db
+      .update(workspaces)
+      .set(workspace)
+      .where(eq(workspaces.id, workspaceId));
+    revalidatePath(`/dashboard/${workspaceId}`);
     return { data: null, error: null };
   } catch (error) {
     console.log(error);
