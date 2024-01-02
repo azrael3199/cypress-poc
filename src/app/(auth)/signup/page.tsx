@@ -61,7 +61,7 @@ const Signup = () => {
       "border-red-500/50": codeExchangeError,
       "text-red-700": codeExchangeError,
     });
-  }, []);
+  }, [codeExchangeError]);
 
   const form = useForm<z.infer<typeof SignUpFormSchema>>({
     mode: "onChange",
@@ -77,7 +77,7 @@ const Signup = () => {
 
   const onSubmit = async ({ email, password }: z.infer<typeof FormSchema>) => {
     const { error } = await actionSignUpUser({ email, password });
-    if (error) {
+    if (error && error.message) {
       setSubmitError(error.message);
       form.reset();
       return;

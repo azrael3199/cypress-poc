@@ -38,5 +38,5 @@ export async function actionSignUpUser({
     },
   });
 
-  return response;
+  return { ...response, error: { ...response.error } };
 }

@@ -8,14 +8,16 @@ import {
   boolean,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
-import { prices, subscriptionStatus } from "../../../migrations/schema";
+import { prices, subscriptionStatus, users } from "../../../migrations/schema";
 
 export const workspaces = pgTable("workspaces", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   createdAt: timestamp("created_at", {
     withTimezone: true,
     mode: "string",
-  }),
+  })
+    .defaultNow()
+    .notNull(),
   workspaceOwner: uuid("workspace_owner").notNull(),
   title: text("title").notNull(),
   iconId: text("icon_id").notNull(),
@@ -27,7 +29,9 @@ export const workspaces = pgTable("workspaces", {
 
 export const files = pgTable("files", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow()
+    .notNull(),
   title: text("title").notNull(),
   iconId: text("icon_id").notNull(),
   data: text("data"),
@@ -43,7 +47,9 @@ export const files = pgTable("files", {
 
 export const folders = pgTable("folders", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" }),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow()
+    .notNull(),
   title: text("title").notNull(),
   iconId: text("icon_id").notNull(),
   data: text("data"),
@@ -97,4 +103,20 @@ export const subscriptions = pgTable("subscriptions", {
     withTimezone: true,
     mode: "string",
   }).default(sql`now()`),
+});
+
+export const collaborators = pgTable("collaborators", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  workspaceId: uuid("workspace_id")
+    .notNull()
+    .references(() => workspaces.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at", {
+    withTimezone: true,
+    mode: "string",
+  })
+    .defaultNow()
+    .notNull(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 });

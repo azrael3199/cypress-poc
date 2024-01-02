@@ -70,8 +70,8 @@ const Header = () => {
   return (
     <header className="p-4 flex justify-center items-center">
       <Link href={"/"} className="w-full justify-left items-center flex gap-2">
-        <Image src={Logo} alt="Cypress Logo" width={25} height={25} />
-        <span className="font-semibold dark:text-white">cypress.</span>
+        <Image src={Logo} alt="Cypress Logo" width={30} height={30} />
+        <span className="text-xl font-semibold dark:text-white">cypress.</span>
       </Link>
       <NavigationMenu className="hidden md:block">
         <NavigationMenuList className="gap-6">
@@ -145,18 +145,18 @@ const Header = () => {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href="#">
-              <NavigationMenuLink
-                className={cn(navigationMenuTriggerStyle(), {
-                  "dark:text-white": path === "#testimonials",
-                  "dark:text-white/40": path !== "#testimonials",
-                  "font-normal": true,
-                  "text-xl": true,
-                })}
-              >
-                Testimonials
-              </NavigationMenuLink>
-            </Link>
+            {/* <Link href="#"> */}
+            <NavigationMenuLink
+              className={cn(navigationMenuTriggerStyle(), {
+                "dark:text-white": path === "#testimonials",
+                "dark:text-white/40": path !== "#testimonials",
+                "font-normal": true,
+                "text-xl": true,
+              })}
+            >
+              Testimonials
+            </NavigationMenuLink>
+            {/* </Link> */}
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
