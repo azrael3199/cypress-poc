@@ -5,15 +5,18 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 interface SelectedWorkspaceProps {
   workspace: Workspace;
   onClick?: (option: Workspace) => void;
+  className?: string;
 }
 
 const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
   workspace,
   onClick,
+  className,
 }) => {
   const supabase = createClientComponentClient();
   const [workspaceLogo, setWorkspaceLogo] = useState("/cypresslogo.svg");
@@ -34,11 +37,16 @@ const SelectedWorkspace: React.FC<SelectedWorkspaceProps> = ({
       onClick={() => {
         if (onClick) onClick(workspace);
       }}
-      className="flex rounded-md hover:bg-muted transition flex-row py-2 px-4 gap-4 justify-center cursor-pointer items-center my-2"
+      className="flex rounded-md hover:bg-muted transition flex-row py-1 px-4 gap-4 justify-center cursor-pointer items-center my-2"
     >
       <Image src={workspaceLogo} alt="Workspace Logo" height={26} width={26} />
       <div className="flex flex-col">
-        <p className="text-lg w-[170px] overflow-hidden overflow-ellipsis whitespace-nowrap">
+        <p
+          className={twMerge(
+            "text-lg w-[170px] overflow-hidden overflow-ellipsis whitespace-nowrap",
+            className
+          )}
+        >
           {workspace.title}
         </p>
       </div>

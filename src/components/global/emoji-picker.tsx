@@ -1,6 +1,5 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import React from "react";
 
 import {
@@ -21,7 +20,6 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
   getValue,
   className,
 }) => {
-  const route = useRouter();
   const Picker = dynamic(() => import("emoji-picker-react"));
   const onClick = (selectedEmoji: any) => {
     if (getValue) getValue(selectedEmoji.emoji);

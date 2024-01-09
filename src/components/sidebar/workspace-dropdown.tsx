@@ -24,8 +24,6 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
   const [selectedOption, setSelectedOption] = useState(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log("privateWorkspaces", privateWorkspaces);
-
   useEffect(() => {
     if (!state.workspaces.length) {
       dispatch({
@@ -78,6 +76,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
                       key={option.id}
                       workspace={option}
                       onClick={handleSelect}
+                      className="text-sm"
                     />
                   ))}
                 </>
@@ -91,6 +90,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
                       key={option.id}
                       workspace={option}
                       onClick={handleSelect}
+                      className="text-sm"
                     />
                   ))}
                 </>
@@ -104,6 +104,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({
                       key={option.id}
                       workspace={option}
                       onClick={handleSelect}
+                      className="text-sm"
                     />
                   ))}
                 </>

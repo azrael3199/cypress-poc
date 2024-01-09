@@ -16,6 +16,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { getUsersFromSearch } from "@/lib/supabase/queries";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 interface CollaboratorSearchProps {
   existingCollaborators: User[] | [];
@@ -28,6 +29,7 @@ const CollaboratorSearch: React.FC<CollaboratorSearchProps> = ({
   existingCollaborators,
   getCollaborator,
 }) => {
+  const supabase = createClientComponentClient();
   const { user } = useSupabaseUser();
   const [searchResults, setSearchResults] = useState<User[] | []>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -88,8 +90,18 @@ const CollaboratorSearch: React.FC<CollaboratorSearchProps> = ({
               >
                 <div className="flex gap-4 items-center">
                   <Avatar className="w-8 h-8">
-                    <AvatarImage src="/avatars/7.png" />
-                    <AvatarFallback>CP</AvatarFallback>
+                    <AvatarImage
+                      src={
+                        user.avatarUrl
+                          ? supabase.storage
+                              .from("avatars")
+                              .getPublicUrl(user.avatarUrl).data.publicUrl
+                          : ""
+                      }
+                    />
+                    <AvatarFallback>
+                      {user.email?.toUpperCase().substring(0, 2)}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="text-sm gap-2 overflow-hidden overflow-ellipsis w-[100px] text-muted-foreground">
                     {user.email}
