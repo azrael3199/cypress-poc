@@ -8,7 +8,7 @@ import React, {
   useMemo,
   useReducer,
 } from "react";
-import { File, Folder, Workspace } from "../supabase/supabase.types";
+import { File, Folder, User, Workspace } from "../supabase/supabase.types";
 import { usePathname } from "next/navigation";
 import { getFiles } from "../supabase/queries";
 // import { getFiles } from "../supabase/queries";
@@ -20,9 +20,12 @@ export type appWorkspacesType = Workspace & {
 
 interface AppState {
   workspaces: appWorkspacesType[] | [];
+  user: Partial<User> | null;
 }
 
 type Action =
+  | { type: "SET_USER"; payload: User }
+  | { type: "UPDATE_USER"; payload: Partial<User> }
   | { type: "ADD_WORKSPACE"; payload: appWorkspacesType }
   | { type: "DELETE_WORKSPACE"; payload: string }
   | {
@@ -46,6 +49,14 @@ type Action =
       payload: { workspaceId: string; folder: appFoldersType };
     }
   | {
+      type: "ADD_FILE";
+      payload: {
+        workspaceId: string;
+        folderId: string;
+        file: File;
+      };
+    }
+  | {
       type: "UPDATE_FOLDER";
       payload: {
         workspaceId: string;
@@ -63,21 +74,54 @@ type Action =
       };
     }
   | {
-      type: "ADD_FILE";
+      type: "DELETE_FOLDER";
       payload: {
         workspaceId: string;
         folderId: string;
-        file: File;
+      };
+    }
+  | {
+      type: "DELETE_FILE";
+      payload: {
+        workspaceId: string;
+        folderId: string;
+        fileId: string;
+      };
+    }
+  | {
+      type: "MOVE_TO_TRASH";
+      payload: {
+        workspaceId: string;
+        folderId: string;
+        inTrashMsg: string;
+      };
+    }
+  | {
+      type: "RESTORE_FOLDER";
+      payload: {
+        workspaceId: string;
+        folderId: string;
       };
     };
 
-const initialState: AppState = { workspaces: [] };
+const initialState: AppState = { workspaces: [], user: null };
 
 const appReducer = (
   state: AppState = initialState,
   action: Action
 ): AppState => {
   switch (action.type) {
+    case "SET_USER":
+      return {
+        ...state,
+        user: action.payload,
+      };
+
+    case "UPDATE_USER":
+      return {
+        ...state,
+        user: { ...state.user, ...action.payload },
+      };
     case "ADD_WORKSPACE":
       return {
         ...state,
@@ -258,6 +302,99 @@ const appReducer = (
             };
           }
 
+          return workspace;
+        }),
+      };
+
+    case "DELETE_FOLDER":
+      return {
+        ...state,
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
+            return {
+              ...workspace,
+              folders: workspace.folders.filter(
+                (folder) => folder.id !== action.payload.folderId
+              ),
+            };
+          }
+          return workspace;
+        }),
+      };
+
+    case "DELETE_FILE":
+      return {
+        ...state,
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
+            return {
+              ...workspace,
+              folders: workspace.folders.map((folder) => {
+                if (folder.id === action.payload.folderId) {
+                  return {
+                    ...folder,
+                    files: folder.files.filter(
+                      (file) => file.id !== action.payload.fileId
+                    ),
+                  };
+                }
+
+                return folder;
+              }),
+            };
+          }
+          return workspace;
+        }),
+      };
+
+    case "MOVE_TO_TRASH":
+      return {
+        ...state,
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
+            return {
+              ...workspace,
+              folders: workspace.folders.map((folder) => {
+                if (folder.id === action.payload.folderId) {
+                  return {
+                    ...folder,
+                    inTrash: action.payload.inTrashMsg,
+                    files: folder.files.map((file) => ({
+                      ...file,
+                      inTrash: action.payload.inTrashMsg,
+                    })),
+                  };
+                }
+                return folder;
+              }),
+            };
+          }
+          return workspace;
+        }),
+      };
+
+    case "RESTORE_FOLDER":
+      return {
+        ...state,
+        workspaces: state.workspaces.map((workspace) => {
+          if (workspace.id === action.payload.workspaceId) {
+            return {
+              ...workspace,
+              folders: workspace.folders.map((folder) => {
+                if (folder.id === action.payload.folderId) {
+                  return {
+                    ...folder,
+                    inTrash: null,
+                    files: folder.files.map((file) => ({
+                      ...file,
+                      inTrash: null,
+                    })),
+                  };
+                }
+                return folder;
+              }),
+            };
+          }
           return workspace;
         }),
       };

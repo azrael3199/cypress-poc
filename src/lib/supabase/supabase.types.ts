@@ -1,6 +1,7 @@
 import { InferSelectModel } from "drizzle-orm";
 import {
   customers,
+  files,
   folders,
   prices,
   products,
@@ -8,7 +9,6 @@ import {
   users,
   workspaces,
 } from "../../../migrations/schema";
-import { files } from "./schema";
 
 export type Json =
   | string
@@ -80,7 +80,7 @@ export interface Database {
       files: {
         Row: {
           banner_url: string | null;
-          created_at: string | null;
+          created_at: string;
           data: string | null;
           folder_id: string | null;
           icon_id: string;
@@ -91,7 +91,7 @@ export interface Database {
         };
         Insert: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           folder_id?: string | null;
           icon_id: string;
@@ -102,7 +102,7 @@ export interface Database {
         };
         Update: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           folder_id?: string | null;
           icon_id?: string;
@@ -131,7 +131,7 @@ export interface Database {
       folders: {
         Row: {
           banner_url: string | null;
-          created_at: string | null;
+          created_at: string;
           data: string | null;
           icon_id: string;
           id: string;
@@ -141,7 +141,7 @@ export interface Database {
         };
         Insert: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           icon_id: string;
           id?: string;
@@ -151,7 +151,7 @@ export interface Database {
         };
         Update: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           icon_id?: string;
           id?: string;
@@ -367,7 +367,7 @@ export interface Database {
       workspaces: {
         Row: {
           banner_url: string | null;
-          created_at: string | null;
+          created_at: string;
           data: string | null;
           icon_id: string;
           id: string;
@@ -378,7 +378,7 @@ export interface Database {
         };
         Insert: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           icon_id: string;
           id?: string;
@@ -389,7 +389,7 @@ export interface Database {
         };
         Update: {
           banner_url?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           data?: string | null;
           icon_id?: string;
           id?: string;
@@ -510,14 +510,11 @@ export type User = InferSelectModel<typeof users>;
 export type Folder = InferSelectModel<typeof folders>;
 export type File = InferSelectModel<typeof files>;
 export type Product = InferSelectModel<typeof products>;
-export type Price = InferSelectModel<typeof prices> & {
-  products?: Product;
-};
+export type Price = InferSelectModel<typeof prices> & { products?: Product };
 export type Customer = InferSelectModel<typeof customers>;
 export type Subscription = InferSelectModel<typeof subscriptions> & {
   prices: Price;
 };
-
 export type ProductWithPrice = Product & {
-  prices?: Price[];
+  prices?: Price;
 };

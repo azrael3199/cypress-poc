@@ -11,7 +11,12 @@ import {
 } from "../ui/accordion";
 import clsx from "clsx";
 import EmojiPicker from "../global/emoji-picker";
-import { createFile, updateFile, updateFolder } from "@/lib/supabase/queries";
+import {
+  createFile,
+  moveFolderToTrash,
+  updateFile,
+  updateFolder,
+} from "@/lib/supabase/queries";
 import { useToast } from "../ui/use-toast";
 import TooltipComponent from "../global/tooltip-component";
 import { PlusIcon, Trash } from "lucide-react";
@@ -72,7 +77,11 @@ const Dropdown: React.FC<DropdownProps> = ({
       router.push(`/dashboard/${workspaceId}/${accordionId}`);
     }
     if (type === "file") {
-      router.push(`/dashboard/${workspaceId}/${folderId}/${accordionId}`);
+      router.push(
+        `/dashboard/${workspaceId}/${accordionId.split("folder")[0]}/${
+          accordionId.split("folder")[1]
+        }`
+      );
     }
   };
 
@@ -218,15 +227,15 @@ const Dropdown: React.FC<DropdownProps> = ({
     const pathId = id.split("folder");
     if (listType === "folder") {
       dispatch({
-        type: "UPDATE_FOLDER",
+        type: "MOVE_TO_TRASH",
         payload: {
-          folder: { inTrash: `Deleted by ${user?.email}` },
+          inTrashMsg: `Deleted by ${user?.email}`,
           folderId: pathId[0],
           workspaceId,
         },
       });
-      const { error } = await updateFolder(
-        { inTrash: `Deleted by ${user?.email}` },
+      const { error } = await moveFolderToTrash(
+        `Deleted by ${user?.email}`,
         pathId[0]
       );
       if (error) {

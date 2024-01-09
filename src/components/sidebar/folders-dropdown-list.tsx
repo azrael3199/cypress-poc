@@ -11,6 +11,7 @@ import { createFolder } from "@/lib/supabase/queries";
 import { useToast } from "../ui/use-toast";
 import { Accordion } from "../ui/accordion";
 import Dropdown from "./Dropdown";
+import useSupabaseRealtime from "@/lib/hooks/useSupabaseRealtime";
 
 interface FoldersDropdownListProps {
   workspaceFolders: Folder[];
@@ -22,7 +23,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
   workspaceId,
 }) => {
   // WIP Local state folders
-  // WIP Setup real time updates
+  useSupabaseRealtime();
   const { subscription } = useSupabaseUser();
   const { toast } = useToast();
   const { state, dispatch, folderId } = useAppState();
@@ -44,6 +45,7 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
         },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceFolders, dispatch, workspaceId]);
 
   useEffect(() => {
@@ -54,9 +56,14 @@ const FoldersDropdownList: React.FC<FoldersDropdownListProps> = ({
   }, [state.workspaces, workspaceId]);
 
   const addFolderHandler = async () => {
-    // if(folders.length >= 3 && !subscription) {
-
-    // }
+    if (folders.length >= 3 && !subscription) {
+      toast({
+        title: "Upgrade to Premium",
+        description:
+          "Please upgrade your plan to premium to add more than 3 folders",
+      });
+      return;
+    }
     const newFolder: Folder = {
       data: null,
       id: v4(),
