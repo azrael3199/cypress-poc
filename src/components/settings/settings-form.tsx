@@ -8,6 +8,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import {
   Briefcase,
   CreditCard,
+  ExternalLink,
   Lock,
   LogOut,
   Plus,
@@ -52,11 +53,14 @@ import {
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 import CypressProfileIcon from "../icons/cypressProfileIcon";
 import LogoutButton from "./logout-button";
+import Link from "next/link";
+import { useSubscriptionModal } from "@/lib/providers/subscription-modal-provider";
 
 const SettingsForm = () => {
   const { toast } = useToast();
   const { state, workspaceId, dispatch } = useAppState();
   const { user, subscription } = useSupabaseUser();
+  const { setOpen } = useSubscriptionModal();
   const router = useRouter();
   const supabase = createClientComponentClient();
   const [permissions, setPermissions] = useState("private");
@@ -301,8 +305,17 @@ const SettingsForm = () => {
           accept="image/*"
           placeholder="workspaceLogo"
           onChange={onChangeWorkspaceLogo}
-          disabled={uploadingLogo || settingsDisabled}
+          disabled={
+            uploadingLogo ||
+            settingsDisabled ||
+            subscription?.status !== "active"
+          }
         />
+        {subscription?.status !== "active" && (
+          <small className="text-muted-foreground">
+            To customize your workspace, you need to upgrade to a Pro Plan.
+          </small>
+        )}
       </div>
       <>
         <Label htmlFor="permissions">Permissions</Label>
@@ -475,6 +488,41 @@ const SettingsForm = () => {
               You&apos;re currently on a{" "}
               {subscription?.status === "active" ? "Pro Plan" : "Free Plan"}
             </p>
+            <Link
+              href="/"
+              target="_blank"
+              className="text-muted-foreground flex flex-row items-center"
+            >
+              View Plans <ExternalLink size={16} />
+            </Link>
+            {subscription?.status === "active" ? (
+              <div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  // WIP disabled={loadingPortal}
+                  className="text-sm"
+                  // WIP onClick={redirectToCustomerPortal}
+                >
+                  Manage Subscription
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  className="text-sm"
+                  onClick={() => {
+                    setOpen(true);
+                  }}
+                >
+                  Start Plan
+                </Button>
+              </div>
+            )}
           </>
         )}
       </>

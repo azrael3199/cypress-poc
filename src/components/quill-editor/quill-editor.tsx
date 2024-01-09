@@ -643,7 +643,17 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
                         </AvatarFallback>
                       </Avatar>
                     </TooltipTrigger>
-                    <TooltipContent>{c.email}</TooltipContent>
+                    <TooltipContent className="flex flex-col items-center justify-center gap-2">
+                      <Image
+                        src={c.avatarUrl}
+                        alt={`${c.email}'s Avatar`}
+                        objectFit="contain"
+                        objectPosition="center"
+                        width={120}
+                        height={120}
+                      />
+                      <div className="text-center p-2">{c.email}</div>
+                    </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               ))}
