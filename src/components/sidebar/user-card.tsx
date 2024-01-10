@@ -70,7 +70,7 @@ const UserCard: React.FC<UserCardProps> = async ({ subscription }) => {
         </div>
       </aside>
       <div className="flex items-center justify-center">
-        <LogoutButton>
+        <LogoutButton className="px-2 rounded-full" variant="ghost">
           <LogOut />
         </LogoutButton>
         <ModeToggle />
