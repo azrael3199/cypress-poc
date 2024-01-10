@@ -52,7 +52,7 @@ import {
 } from "../ui/alert-dialog";
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 import CypressProfileIcon from "../icons/cypressProfileIcon";
-import LogoutButton from "./logout-button";
+import LogoutButton from "../global/logout-button";
 import Link from "next/link";
 import { useSubscriptionModal } from "@/lib/providers/subscription-modal-provider";
 import { postData } from "@/lib/utils";
