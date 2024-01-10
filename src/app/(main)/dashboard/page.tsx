@@ -8,6 +8,7 @@ import DashboardSetup from "@/components/dashboard-setup/dashboard-setup";
 import { getUserSubscriptionStatus } from "@/lib/supabase/queries";
 
 const DashboardPage = async () => {
+  cookies().getAll();
   const supabase = createServerComponentClient({ cookies });
 
   const {

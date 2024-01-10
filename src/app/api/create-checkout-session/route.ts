@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
+  cookies().getAll();
   const { price, quantity = 1, metadata = {} } = await request.json();
   try {
     const supabase = createRouteHandlerClient({ cookies });
