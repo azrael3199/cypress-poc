@@ -606,7 +606,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
                 This {dirType} is in the trash.
               </span>
               <Button
-                size="small"
+                size="sm"
                 variant="outline"
                 className="p-2 bg-transparent border-white text-white hover:bg-white hover:text-[#EB5757]"
                 onClick={restoreFileHandler}
@@ -614,7 +614,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
                 Restore
               </Button>
               <Button
-                size="small"
+                size="sm"
                 variant="outline"
                 className="p-2 bg-transparent border-white text-white hover:bg-white hover:text-[#EB5757]"
                 onClick={deleteFileHandler}

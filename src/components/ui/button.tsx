@@ -46,8 +46,17 @@ export interface ButtonProps
   asChild?: boolean;
   icon?: any;
   logoStyles?: string;
-  variant?: string;
-  size?: string;
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link"
+    | "btn-primary"
+    | "btn-secondary"
+    | null;
+  size?: "default" | "icon" | "sm" | "lg" | null;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(

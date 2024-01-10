@@ -9,6 +9,7 @@ export async function actionLoginUser({
   email,
   password,
 }: z.infer<typeof FormSchema>) {
+  cookies().getAll();
   const supabase = createRouteHandlerClient({ cookies });
   const response = await supabase.auth.signInWithPassword({
     email,
@@ -22,6 +23,7 @@ export async function actionSignUpUser({
   email,
   password,
 }: z.infer<typeof FormSchema>) {
+  cookies().getAll();
   const supabase = createRouteHandlerClient({ cookies });
   const { data } = await supabase
     .from("profiles")
