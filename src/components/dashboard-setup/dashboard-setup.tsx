@@ -187,6 +187,12 @@ const DashboardSetup: React.FC<DashboardSetupProps> = ({
                   required: false,
                 })}
               />
+              {subscription?.status !== "active" && (
+                <small className="text-muted-foreground">
+                  To customize your workspace, you need to upgrade to a Pro
+                  Plan.
+                </small>
+              )}
               <small className="text-red-600">
                 {errors?.logo?.message?.toString()}
               </small>

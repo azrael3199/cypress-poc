@@ -8,6 +8,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import {
   Briefcase,
   CreditCard,
+  ExternalLink,
   Lock,
   LogOut,
   Plus,
@@ -52,11 +53,15 @@ import {
 import { useSupabaseUser } from "@/lib/providers/supabase-user-provider";
 import CypressProfileIcon from "../icons/cypressProfileIcon";
 import LogoutButton from "./logout-button";
+import Link from "next/link";
+import { useSubscriptionModal } from "@/lib/providers/subscription-modal-provider";
+import { postData } from "@/lib/utils";
 
 const SettingsForm = () => {
   const { toast } = useToast();
   const { state, workspaceId, dispatch } = useAppState();
   const { user, subscription } = useSupabaseUser();
+  const { setOpen } = useSubscriptionModal();
   const router = useRouter();
   const supabase = createClientComponentClient();
   const [permissions, setPermissions] = useState("private");
@@ -68,10 +73,15 @@ const SettingsForm = () => {
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [userAvatar, setUserAvatar] = useState("");
   const [settingsDisabled, setSettingsDisabled] = useState(true);
-  // WIP PAYMENT PORTALS
+  const [loadingPortal, setLoadingPortal] = useState(false);
 
   const addCollaborator = async (user: User) => {
     if (!workspaceId) return;
+
+    if (subscription?.status !== "active" && collaborators.length >= 2) {
+      setOpen(true);
+      return;
+    }
 
     await addCollaborators([user], workspaceId);
     setCollaborators([...collaborators, user]);
@@ -226,7 +236,21 @@ const SettingsForm = () => {
   // fetching avatar details from supabase storage
   // get workspace details
   // Get all the collaborators
-  // WIP Payment Portal redirect
+
+  const redirectToCustomerPortal = async () => {
+    setLoadingPortal(true);
+    try {
+      const { url, error } = await postData({
+        url: "/api/create-portal-link",
+      });
+      if (error) throw new Error(error);
+      window.location.assign(url);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoadingPortal(false);
+  };
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -301,8 +325,17 @@ const SettingsForm = () => {
           accept="image/*"
           placeholder="workspaceLogo"
           onChange={onChangeWorkspaceLogo}
-          disabled={uploadingLogo || settingsDisabled}
+          disabled={
+            uploadingLogo ||
+            settingsDisabled ||
+            subscription?.status !== "active"
+          }
         />
+        {subscription?.status !== "active" && (
+          <small className="text-muted-foreground">
+            To customize your workspace, you need to upgrade to a Pro Plan.
+          </small>
+        )}
       </div>
       <>
         <Label htmlFor="permissions">Permissions</Label>
@@ -475,6 +508,41 @@ const SettingsForm = () => {
               You&apos;re currently on a{" "}
               {subscription?.status === "active" ? "Pro Plan" : "Free Plan"}
             </p>
+            <Link
+              href="/"
+              target="_blank"
+              className="text-muted-foreground flex flex-row items-center"
+            >
+              View Plans <ExternalLink size={16} />
+            </Link>
+            {subscription?.status === "active" ? (
+              <div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  disabled={loadingPortal}
+                  className="text-sm"
+                  onClick={redirectToCustomerPortal}
+                >
+                  Manage Subscription
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  className="text-sm"
+                  onClick={() => {
+                    setOpen(true);
+                  }}
+                >
+                  Start Plan
+                </Button>
+              </div>
+            )}
           </>
         )}
       </>
