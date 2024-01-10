@@ -55,6 +55,7 @@ import CypressProfileIcon from "../icons/cypressProfileIcon";
 import LogoutButton from "./logout-button";
 import Link from "next/link";
 import { useSubscriptionModal } from "@/lib/providers/subscription-modal-provider";
+import { postData } from "@/lib/utils";
 
 const SettingsForm = () => {
   const { toast } = useToast();
@@ -72,10 +73,15 @@ const SettingsForm = () => {
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [userAvatar, setUserAvatar] = useState("");
   const [settingsDisabled, setSettingsDisabled] = useState(true);
-  // WIP PAYMENT PORTALS
+  const [loadingPortal, setLoadingPortal] = useState(false);
 
   const addCollaborator = async (user: User) => {
     if (!workspaceId) return;
+
+    if (subscription?.status !== "active" && collaborators.length >= 2) {
+      setOpen(true);
+      return;
+    }
 
     await addCollaborators([user], workspaceId);
     setCollaborators([...collaborators, user]);
@@ -230,7 +236,21 @@ const SettingsForm = () => {
   // fetching avatar details from supabase storage
   // get workspace details
   // Get all the collaborators
-  // WIP Payment Portal redirect
+
+  const redirectToCustomerPortal = async () => {
+    setLoadingPortal(true);
+    try {
+      const { url, error } = await postData({
+        url: "/api/create-portal-link",
+      });
+      if (error) throw new Error(error);
+      window.location.assign(url);
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoadingPortal(false);
+  };
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -501,9 +521,9 @@ const SettingsForm = () => {
                   type="button"
                   size="sm"
                   variant="secondary"
-                  // WIP disabled={loadingPortal}
+                  disabled={loadingPortal}
                   className="text-sm"
-                  // WIP onClick={redirectToCustomerPortal}
+                  onClick={redirectToCustomerPortal}
                 >
                   Manage Subscription
                 </Button>
