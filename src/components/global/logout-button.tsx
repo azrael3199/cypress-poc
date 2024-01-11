@@ -1,7 +1,7 @@
+"use client";
 import React from "react";
 import { Button } from "../ui/button";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useToast } from "../ui/use-toast";
 
 interface LogoutButtonProps {
@@ -24,8 +24,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
   className,
   variant,
 }) => {
-  cookies().getAll();
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = createClientComponentClient();
 
   const { toast } = useToast();
 
