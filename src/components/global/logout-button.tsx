@@ -1,5 +1,8 @@
 import React from "react";
 import { Button } from "../ui/button";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { useToast } from "../ui/use-toast";
 
 interface LogoutButtonProps {
   children: React.ReactNode;
@@ -21,8 +24,28 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
   className,
   variant,
 }) => {
+  cookies().getAll();
+  const supabase = createServerComponentClient({ cookies });
+
+  const { toast } = useToast();
+
+  const logoutUser = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: `Could not logout user: ${error}`,
+      });
+    }
+  };
+
   return (
-    <Button variant={variant ?? "secondary"} className={className}>
+    <Button
+      variant={variant ?? "secondary"}
+      className={className}
+      onClick={logoutUser}
+    >
       {children}
     </Button>
   );
